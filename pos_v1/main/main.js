@@ -63,45 +63,47 @@ function producediscountlist() {
   return discountlist;
 }
 
-function printReceipt(tags) {
-  for (var i =0;i<tags.length;i++){
-    if (tags[i].indexOf("-")<0){
-      tags[i]=tags[i]+"-1";
+function modifyTags(tags) {
+    for (var i = 0; i < tags.length; i++) {
+        if (tags[i].indexOf("-") < 0) {
+            tags[i] = tags[i] + "-1";
+        } else tags[i] = tags[i];
     }
-    else tags[i]=tags[i];
-  }
+    return tags;
+}
+function printReceipt(tags) {
+  tags = modifyTags(tags);
   var discountlist = producediscountlist();
   var itemList = loadAllItems();
-  var goodsList = [];
-  goodsList.length=itemList.length;
-  for(var i =0;i<goodsList.length;i++){
-    goodsList[i]=0;
+  var countList = [];
+  countList.length=itemList.length;
+  for(var i =0;i<countList.length;i++){
+    countList[i]=0;
   }
-  var total1 = 0;
-  var total2 = 0;
+  var discountTotal = 0;
+  var noDiscountTotal = 0;
   var discount=0;
   for(var i =0;i<tags.length;i++){
     var number = tags[i].indexOf("-");
     var count = Number(tags[i].substring(number + 1));
     tags[i]=tags[i].substring(0,number);
-    goodsList[Number(tags[i].substring(9))]=goodsList[Number(tags[i].substring(9))]+count;
-
+    countList[Number(tags[i].substring(9))]=countList[Number(tags[i].substring(9))]+count;
   }
   console.log("***<没钱赚商店>收据***\n");
-  for(var i =0;i<goodsList.length;i++){
-  if (goodsList[i]>0){
+  for(var i =0;i<countList.length;i++){
+  if (countList[i]>0){
     if(discountlist.indexOf(i)>-1){
-      console.log("名称：" + itemList[i].name +"，数量：" + goodsList[i] + itemList[i].unit + "，单价：" + itemList[i].price.toFixed(2) + "(元)，小计：" + ((goodsList[i]- parseInt(goodsList[i]/3))*itemList[i].price).toFixed(2)+"(元)\n");
-      total1 = total1 +(goodsList[i]-parseInt(goodsList[i]/3))*itemList[i].price;
-      discount = discount + parseInt(goodsList[i]/3)*itemList[i].price;
+      console.log("名称：" + itemList[i].name +"，数量：" + countList[i] + itemList[i].unit + "，单价：" + itemList[i].price.toFixed(2) + "(元)，小计：" + ((countList[i]- parseInt(countList[i]/3))*itemList[i].price).toFixed(2)+"(元)\n");
+      discountTotal = discountTotal +(countList[i]-parseInt(countList[i]/3))*itemList[i].price;
+      discount = discount + parseInt(countList[i]/3)*itemList[i].price;
     }
     else {
-      console.log("名称：" + itemList[i].name +"，数量：" + goodsList[i] + itemList[i].unit + "，单价：" + itemList[i].price.toFixed(2) + "(元)，小计：" + (goodsList[i]*itemList[i].price).toFixed(2)+"(元)\n");
-      total2 = total2 +  goodsList[i]*itemList[i].price;
+      console.log("名称：" + itemList[i].name +"，数量：" + countList[i] + itemList[i].unit + "，单价：" + itemList[i].price.toFixed(2) + "(元)，小计：" + (countList[i]*itemList[i].price).toFixed(2)+"(元)\n");
+      noDiscountTotal = noDiscountTotal +  countList[i]*itemList[i].price;
     }
   }
   }
-      console.log("----------------------\n"+"总计：" + (total1+total2).toFixed(2) + "(元)\n"+"节省："+discount.toFixed(2)+"(元)\n"+"**********************");
+      console.log("----------------------\n"+"总计：" + (discountTotal+noDiscountTotal).toFixed(2) + "(元)\n"+"节省："+discount.toFixed(2)+"(元)\n"+"**********************");
 }
 
 const tags = [
